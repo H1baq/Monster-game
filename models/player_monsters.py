@@ -1,5 +1,5 @@
 # import necessary modules
-from sqlalchemy import Column, Integer, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from models.base import Base
 
@@ -14,6 +14,9 @@ class PlayerMonster(Base):
     level = Column(Integer, default=1)
     current_hp = Column(Integer)
     nickname = Column(String)
+    experience = Column(Integer, default=0)
+
+
 
     # Relationships between PlayerMonster and other models
     player = relationship("Player", backref="monsters")

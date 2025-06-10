@@ -14,3 +14,5 @@ class MonsterSpecies(Base):
     base_stats = Column(JSON)  # {"hp": 45, "attack": 60, "defense": 40, "speed": 50}
     rarity = Column(String)  # Common, Uncommon, Rare, Legendary
     abilities = Column(JSON)  # ["Fire Blast", "Tail Whip"]
+
+    

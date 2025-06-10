@@ -9,3 +9,4 @@ class Player(Base):
     level = Column(Integer, default=1)
     experience = Column(Integer, default=0)
     money = Column(Integer, default=0)
+
