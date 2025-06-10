@@ -5,6 +5,8 @@ from utils.catching import try_catch_monster
 from utils.leveling import level_up_monster
 from utils.view_inventory import view_inventory
 
+
+
 def create_default_player(session):
     player = session.query(Player).filter_by(id=1).first()
     if not player:
@@ -12,6 +14,8 @@ def create_default_player(session):
         session.add(player)
         session.commit()
     return player
+
+
 
 def main(session):
     player = create_default_player(session)
@@ -41,6 +45,7 @@ def main(session):
             break
         else:
             print("Invalid choice. Try again.")
+            
 
 if __name__ == "__main__":
     session = Session()
