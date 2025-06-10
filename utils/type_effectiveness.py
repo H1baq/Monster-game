@@ -1,3 +1,4 @@
+
 type_chart = {
     "Fire": {
         "strong_against": ["Grass", "Air"],
@@ -25,10 +26,16 @@ type_chart = {
     }
 }
 
-def get_type_effectiveness(attacker_type, defender_type):
+def get_type_effectiveness(attacker_type: str, defender_type: str) -> float:
+    """
+    Returns a damage multiplier based on attacker and defender types.
+    - Strong against = 2.0
+    - Weak against = 0.5
+    - Neutral = 1.0
+    """
     if defender_type in type_chart.get(attacker_type, {}).get("strong_against", []):
-        return "strong"
+        return 2.0
     elif defender_type in type_chart.get(attacker_type, {}).get("weak_against", []):
-        return "weak"
+        return 0.5
     else:
-        return "neutral"
+        return 1.0

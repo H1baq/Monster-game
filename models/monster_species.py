@@ -10,7 +10,7 @@ class MonsterSpecies(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String, unique=True)
-    type = Column(String)  # Fire, Water, etc.
-    base_stats = Column(JSON)  # {"hp": 45, "attack": 60, "defense": 40, "speed": 50}
-    rarity = Column(String)  # Common, Uncommon, Rare, Legendary
-    abilities = Column(JSON)  # ["Fire Blast", "Tail Whip"]
+    type = Column(String)
+    base_stats = Column(JSON)
+    rarity = Column(String)
+    abilities = Column(JSON)
