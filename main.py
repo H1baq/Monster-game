@@ -6,7 +6,10 @@ from utils.catching import try_catch_monster
 from utils.leveling import level_up_monster
 from utils.view_inventory import view_inventory
 from utils.view_profile import view_player_profile
-from utils.view_monster_profile import view_monster_profile 
+from utils.view_monster_profile import view_monster_profile
+from utils.battle_logger import log_battle
+from utils.battle_engine import simulate_battle, simulate_ai_battle
+
 
 def main(session):
     player = login_or_create_player(session)
@@ -21,6 +24,8 @@ def main(session):
         print("3. Level Up a Monster")
         print("4. View Player Profile")
         print("5. View Monster Profile")
+        print("6. Battle a CPU Trainer")
+        print("7. Battle Another Player")
         print("0. Exit")
 
         choice = input("Choose an option: ")
@@ -67,6 +72,13 @@ def main(session):
                     print("❌ Monster not found or doesn't belong to you.")
             except ValueError:
                 print("⚠️ Invalid input. Please enter a valid number.")
+
+        elif choice == "6":
+            simulate_ai_battle(session, player)
+
+        elif choice == "7":
+            opponent_username = input("Enter the username of the player you want to battle: ").strip()
+            simulate_battle(session, player.id, opponent_username)
 
         elif choice == "0":
             print("Rest well, fierce tamer!")

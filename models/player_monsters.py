@@ -2,6 +2,8 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from models.base import Base
+import sqlalchemy as sa
+from models.monster_battle import MonsterBattle
 
 # This file defines the PlayerMonster model, which represents a player's monster in the game.
 # It includes attributes such as player ID, species ID, level, current HP, and nickname.
@@ -33,5 +35,5 @@ class PlayerMonster(Base):
 
     # Relationships between PlayerMonster and other models
     player = relationship("Player", back_populates="monsters")
-    species = relationship("MonsterSpecies", backref="instances")
-    battles = relationship("Battle", back_populates="monster", cascade="all, delete")
+    monster_battles = relationship("MonsterBattle", back_populates="player_monster", cascade="all, delete")
+    species = relationship("MonsterSpecies", back_populates="player_monsters")

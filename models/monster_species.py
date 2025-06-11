@@ -2,6 +2,7 @@
 #JSON is used to store complex data structures like abilities and base stats
 from sqlalchemy import Column, Integer, String, JSON
 from models.base import Base
+from sqlalchemy.orm import relationship
 
 # This file defines the MonsterSpecies model, which represents different species of monsters in the game.
 # It includes attributes such as name, type, base stats, rarity, and abilities.
@@ -14,5 +15,7 @@ class MonsterSpecies(Base):
     base_stats = Column(JSON)  # {"hp": 45, "attack": 60, "defense": 40, "speed": 50}
     rarity = Column(String)  # Common, Uncommon, Rare, Legendary
     abilities = Column(JSON)  # ["Fire Blast", "Tail Whip"]
+
+    player_monsters = relationship("PlayerMonster", back_populates="species")
 
     
