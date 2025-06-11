@@ -19,5 +19,5 @@ class PlayerMonster(Base):
 
 
     # Relationships between PlayerMonster and other models
-    player = relationship("Player", backref="monsters")
+    player = relationship("Player", back_populates="monsters")
     species = relationship("MonsterSpecies", backref="instances")
