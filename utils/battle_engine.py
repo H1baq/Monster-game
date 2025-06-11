@@ -5,6 +5,8 @@ from models.player_monsters import PlayerMonster
 from utils.battle_logger import log_battle
 from models.monster_species import MonsterSpecies
 from utils.rewards import reward_player
+from utils.shop import open_monster_shop
+from utils.battle_logger import log_battle
 
 def calculate_damage(attacker, defender):
     attack = attacker.species.base_stats.get("attack", 10)
