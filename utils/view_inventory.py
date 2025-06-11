@@ -8,3 +8,4 @@ def view_inventory(session, player):
             print(f"- {pm.nickname or pm.species.name} (Level {pm.level}) - {pm.species.type}")
     else:
         print("You have no monsters yet!")
+
