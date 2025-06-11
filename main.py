@@ -5,6 +5,7 @@ from utils.auth import login_or_create_player
 from utils.catching import try_catch_monster
 from utils.leveling import level_up_monster
 from utils.view_inventory import view_inventory
+from utils.view_profile import view_player_profile
 
 def main(session):
     # 🔐 Login or create player
@@ -16,7 +17,8 @@ def main(session):
         print("1. Catch a Monster")
         print("2. View Inventory")
         print("3. Level Up a Monster")
-        print("4. Exit")
+        print("4. View Player Profile")
+        print("0. Exit")
 
         choice = input("Choose an option: ")
 
@@ -37,6 +39,8 @@ def main(session):
             except ValueError:
                 print("⚠️ Please enter a valid number.")
         elif choice == "4":
+            view_player_profile(session, player)
+        elif choice == "0":
             print("Rest well, fierce tamer!")
             break
         else:
