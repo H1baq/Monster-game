@@ -4,6 +4,7 @@ from models.player import Player
 from models.player_monsters import PlayerMonster
 from utils.battle_logger import log_battle
 from models.monster_species import MonsterSpecies
+from utils.rewards import reward_player
 
 def calculate_damage(attacker, defender):
     attack = attacker.species.base_stats.get("attack", 10)
@@ -31,6 +32,14 @@ def simulate_turn_based_combat(player_mon, opponent_mon):
             return "opponent"
 
     return None
+
+def determine_difficulty(player_level, opponent_level):
+    level_diff = opponent_level - player_level
+    if level_diff >= 3:
+        return "epic"
+    elif level_diff >= 1:
+        return "hard"
+    return "normal"
 
 def simulate_battle(session, player1_id, opponent_username):
     player1 = session.query(Player).get(player1_id)
@@ -62,9 +71,11 @@ def simulate_battle(session, player1_id, opponent_username):
     if outcome == "player":
         winner = player1
         loser = player2
+        difficulty = determine_difficulty(p1_mon.level, p2_mon.level)
     elif outcome == "opponent":
         winner = player2
         loser = player1
+        difficulty = determine_difficulty(p2_mon.level, p1_mon.level)
     else:
         print("\n🤝 It's a draw!")
         log_battle(session, player1.id, player2.id, None, result="draw")
@@ -80,7 +91,7 @@ def simulate_battle(session, player1_id, opponent_username):
     winner.wins += 1
     loser.total_battles += 1
 
-    winner.gain_experience(50)
+    reward_player(session, winner, difficulty=difficulty)
     session.commit()
 
 def simulate_ai_battle(session, player):
@@ -113,11 +124,9 @@ def simulate_ai_battle(session, player):
     print(f"Your Monster: {player_mon.species.name} (Lvl {player_mon.level})")
     print(f"CPU Monster: {species.name} (Lvl {ai_mon.level})")
 
-    # Get stats
     player_stats = player_mon.species.base_stats
     ai_stats = species.base_stats
 
-    # Battle loop
     turn = 0
     while player_mon.current_hp > 0 and ai_mon.current_hp > 0:
         attacker = "Player" if turn % 2 == 0 else "CPU"
@@ -132,12 +141,14 @@ def simulate_ai_battle(session, player):
 
         turn += 1
 
+    difficulty = determine_difficulty(player_mon.level, ai_mon.level)
+
     if player_mon.current_hp > 0:
         winner = player
         result = "win"
         print("\n🏆 You won the battle!")
         player.wins += 1
-        player.gain_experience(30)
+        reward_player(session, player, difficulty=difficulty)
     else:
         winner = None
         result = "loss"
