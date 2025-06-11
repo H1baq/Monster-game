@@ -1,27 +1,17 @@
 from db import Session
 from models.player import Player
 from models.player_monsters import PlayerMonster
+from utils.auth import login_or_create_player
 from utils.catching import try_catch_monster
 from utils.leveling import level_up_monster
 from utils.view_inventory import view_inventory
 
 
-
-def create_default_player(session):
-    player = session.query(Player).filter_by(id=1).first()
-    if not player:
-        player = Player(username="Ash")
-        session.add(player)
-        session.commit()
-    return player
-
-
-
 def main(session):
-    player = create_default_player(session)
+    player = login_or_create_player(session)
 
     while True:
-        print("\n=== WELCOME TO MONSTER TAMER HUB ===")
+        print(f"\n=== MONSTER TAMER HUB — Logged in as {player.username} ===")
         print("1. Catch a Monster")
         print("2. View Inventory")
         print("3. Level Up a Monster")
@@ -45,7 +35,6 @@ def main(session):
             break
         else:
             print("Invalid choice. Try again.")
-            
 
 if __name__ == "__main__":
     session = Session()
