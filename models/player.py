@@ -16,6 +16,7 @@ class Player(Base):
     wins = Column(Integer, default=0, nullable=False)
 
     monsters = relationship("PlayerMonster", back_populates="player", cascade="all, delete-orphan")
+    battles = relationship("Battle", back_populates="player", cascade="all, delete")
 
     def gain_experience(self, amount):
         """Add EXP and level up if threshold is reached."""

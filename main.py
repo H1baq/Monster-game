@@ -33,7 +33,7 @@ def main(session):
 
         elif choice == "3":
             try:
-                monster_id = int(input("Enter monster ID to level up: "))
+                monster_id = int(input("Enter monster ID to train: "))
                 monster = session.query(PlayerMonster).filter_by(id=monster_id).first()
                 if monster and monster.player_id == player.id:
                     level_up_monster(monster, exp_points=120)
@@ -55,7 +55,7 @@ def main(session):
 
             print("\n📖 Your Monsters:")
             for m in player_monsters:
-                print(f"🆔 ID: {m.id} | 🐉 {m.species.name} | 🎚️ Lvl: {m.level} | 🧠 EXP: {m.experience} | ❤️ HP: {m.current_hp} | 🏷️ Nickname: {m.nickname or 'None'}")
+                print(f"🆔 ID: {m.id} | 🐉 {m.species.name} | 🌚 Lvl: {m.level} | 🧠 EXP: {m.experience} | ❤️ HP: {m.current_hp} | 🏷️ Nickname: {m.nickname or 'None'}")
 
             try:
                 monster_id = int(input("\nEnter Monster ID to view profile: "))
