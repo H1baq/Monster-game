@@ -11,6 +11,7 @@ from utils.battle_logger import log_battle
 from utils.battle_engine import simulate_battle, simulate_ai_battle
 from utils.battle_logger import view_battle_history
 from utils.shop import open_monster_shop
+from utils.trading import propose_trade, respond_to_trade
 
 
 def main(session):
@@ -30,6 +31,7 @@ def main(session):
         print("7. Battle Another Player")
         print("8. View Battle History")
         print("9. Visit Ultra Rare Monster Shop")
+        print("10. Trade Monsters")
 
         print("0. Exit")
 
@@ -90,6 +92,30 @@ def main(session):
 
         elif choice == "9":
             open_monster_shop(session, player)
+    
+        elif choice == "10":
+            print("\n📦 Monster Trading Center")
+            sub_choice = input("1. Propose Trade\n2. Respond to Trade\nChoose: ")
+
+            if sub_choice == "1":
+                try:
+                  receiver_id = int(input("Enter Receiver's Player ID: "))
+                  offered_id = int(input("Enter YOUR Monster ID to offer: "))
+                  requested_id = int(input("Enter Receiver's Monster ID to request: "))
+                  propose_trade(session, player.id, receiver_id, offered_id, requested_id)
+                except ValueError:
+                  print("⚠️ Invalid input. Please enter valid numbers.")
+
+            elif sub_choice == "2":
+                 try:
+                   trade_id = int(input("Enter Trade ID to respond to: "))
+                   decision = input("Accept trade? (yes/no): ").lower()
+                   respond_to_trade(session, trade_id, accept=(decision == "yes"))
+                 except ValueError:
+                    print("⚠️ Invalid input.")
+            else:
+              print("❌ Invalid choice.")
+
 
         elif choice == "0":
             print("Rest well, fierce tamer!")
