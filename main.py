@@ -1,30 +1,52 @@
 from db import Session
 from models.player import Player
 from models.player_monsters import PlayerMonster
+
+# Auth and profile
 from utils.auth import login_or_create_player
+from utils.view_profile import view_player_profile
+from utils.view_monster_profile import view_monster_profile
+
+# Gameplay
 from utils.catching import try_catch_monster
 from utils.leveling import level_up_monster
 from utils.view_inventory import view_inventory
-from utils.view_profile import view_player_profile
-from utils.view_monster_profile import view_monster_profile
-from utils.battle_logger import log_battle
 from utils.battle_engine import simulate_battle, simulate_ai_battle
-from utils.battle_logger import view_battle_history
+from utils.battle_logger import log_battle, view_battle_history
+
+# Shop and trading
 from utils.shop import open_monster_shop
-from utils.relationship import add_relationship, list_relationships, get_related_player_ids, clean_invalid_relationships
-from utils.trading import propose_trade, respond_to_trade, list_player_ids, list_player_monsters, list_pending_trades
+from utils.trading import (
+    propose_trade,
+    respond_to_trade,
+    list_player_ids,
+    list_player_monsters,
+    list_pending_trades,
+)
+
+# Social features
+from utils.relationship import (
+    add_relationship,
+    list_relationships,
+    get_related_player_ids,
+    clean_invalid_relationships,
+)
+
+# Leaderboards
 from utils.leaderboard import leaderboard_by_collection, leaderboard_by_wins
 
 
 def main(session):
-    clean_invalid_relationships(session) # Clean up any invalid relationships at startup
-    player = login_or_create_player(session) # Login or create player
+    clean_invalid_relationships(session)
+    player = login_or_create_player(session)
 
-    while True: # Main game loop
+    while True:
         session.refresh(player)
         print(f"\n=== MONSTER TAMER HUB — Logged in as {player.username} ===")
         print(f"🔹 Level: {player.level} | 🧠 XP: {round(player.experience, 1)} | 💰 Money: £{round(player.money, 2)}")
         print(f"⚔️ Battles: {player.total_battles} | ✅ Wins: {player.wins} | ❌ Losses: {player.losses} | 🏆 Win Rate: {player.win_rate}%")
+
+        print("\n📜 Menu Options:")
         print("1. Catch a Monster")
         print("2. View Inventory")
         print("3. Level Up a Monster")
@@ -37,9 +59,9 @@ def main(session):
         print("10. Trade Monsters")
         print("11. View Relationships")
         print("12. View Leaderboard")
-        print("0. Exit")
+        print("0. Exit Game")
 
-        choice = input("Choose an option: ")
+        choice = input("\nChoose an option: ").strip()
 
         if choice == "1":
             try_catch_monster(session, player.id)
@@ -64,7 +86,6 @@ def main(session):
 
         elif choice == "5":
             player_monsters = session.query(PlayerMonster).filter_by(player_id=player.id).all()
-
             if not player_monsters:
                 print("⚠️ You don't have any monsters yet.")
                 continue
@@ -76,7 +97,6 @@ def main(session):
             try:
                 monster_id = int(input("\nEnter Monster ID to view profile: "))
                 monster = session.query(PlayerMonster).filter_by(id=monster_id, player_id=player.id).first()
-
                 if monster:
                     view_monster_profile(monster)
                 else:
@@ -99,16 +119,16 @@ def main(session):
 
         elif choice == "10":
             print("\n📦 Monster Trading Center")
-            print("\nAvailable Players:")
+            print("\n🔍 Available Players:")
             list_player_ids(session)
 
-            print("\nYour Monsters:")
+            print("\n📚 Your Monsters:")
             list_player_monsters(session, player.id)
 
-            print("\nPending Trades:")
+            print("\n⏳ Pending Trades:")
             list_pending_trades(session)
 
-            sub_choice = input("\n1. Propose Trade\n2. Respond to Trade\nChoose: ")
+            sub_choice = input("\n1. Propose Trade\n2. Respond to Trade\nChoose: ").strip()
 
             if sub_choice == "1":
                 try:
@@ -128,7 +148,7 @@ def main(session):
                     print("⚠️ Invalid input.")
             else:
                 print("❌ Invalid choice.")
-        
+
         elif choice == "11":
             print("\n🧩 Friend/Rival System")
             print("1. Add Friend/Rival")
@@ -178,7 +198,6 @@ def main(session):
                     print("❌ Invalid input.")
 
         elif choice == "12":
-            from utils.leaderboard import leaderboard_by_collection, leaderboard_by_wins
             print("\n📊 Leaderboards:")
             print("1. Monster Collection")
             print("2. Battle Wins")
@@ -190,16 +209,15 @@ def main(session):
                 leaderboard_by_wins(session)
             else:
                 print("❌ Invalid choice.")
-            
 
         elif choice == "0":
-            print("Rest well, fierce tamer!")
+            print("👋 Rest well, fierce tamer! See you next time.")
             break
 
         else:
             print("❌ Invalid choice. Try again.")
 
-# Ensure all relationships are valid at the end of each loop
+
 if __name__ == "__main__":
     with Session() as session:
         main(session)
