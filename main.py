@@ -1,7 +1,6 @@
 from db import Session
 from models.player import Player
 from models.player_monsters import PlayerMonster
-from models.relationship import Relationship
 from utils.auth import login_or_create_player
 from utils.catching import try_catch_monster
 from utils.leveling import level_up_monster
@@ -14,6 +13,8 @@ from utils.battle_logger import view_battle_history
 from utils.shop import open_monster_shop
 from utils.relationship import add_relationship, list_relationships, get_related_player_ids, clean_invalid_relationships
 from utils.trading import propose_trade, respond_to_trade, list_player_ids, list_player_monsters, list_pending_trades
+from utils.leaderboard import leaderboard_by_collection, leaderboard_by_wins
+
 
 def main(session):
     clean_invalid_relationships(session) # Clean up any invalid relationships at startup
@@ -22,7 +23,7 @@ def main(session):
     while True: # Main game loop
         session.refresh(player)
         print(f"\n=== MONSTER TAMER HUB — Logged in as {player.username} ===")
-        print(f"🔹 Level: {player.level} | 🧠 XP: {round(player.experience, 1)} | 💰 Money: ${round(player.money, 2)}")
+        print(f"🔹 Level: {player.level} | 🧠 XP: {round(player.experience, 1)} | 💰 Money: £{round(player.money, 2)}")
         print(f"⚔️ Battles: {player.total_battles} | ✅ Wins: {player.wins} | ❌ Losses: {player.losses} | 🏆 Win Rate: {player.win_rate}%")
         print("1. Catch a Monster")
         print("2. View Inventory")
@@ -35,6 +36,7 @@ def main(session):
         print("9. Visit Ultra Rare Monster Shop")
         print("10. Trade Monsters")
         print("11. View Relationships")
+        print("12. View Leaderboard")
         print("0. Exit")
 
         choice = input("Choose an option: ")
@@ -174,6 +176,21 @@ def main(session):
                     simulate_battle(session, player.id, session.query(Player).get(opponent_id).username)
                 except ValueError:
                     print("❌ Invalid input.")
+
+        elif choice == "12":
+            from utils.leaderboard import leaderboard_by_collection, leaderboard_by_wins
+            print("\n📊 Leaderboards:")
+            print("1. Monster Collection")
+            print("2. Battle Wins")
+            sub_choice = input("Choose a leaderboard: ")
+
+            if sub_choice == "1":
+                leaderboard_by_collection(session)
+            elif sub_choice == "2":
+                leaderboard_by_wins(session)
+            else:
+                print("❌ Invalid choice.")
+            
 
         elif choice == "0":
             print("Rest well, fierce tamer!")

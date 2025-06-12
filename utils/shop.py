@@ -11,7 +11,7 @@ RARITY_PRICES = {
 
 def open_monster_shop(session, player):
     print("\n🏪 Welcome to the Ultra Rare Monster Shop!")
-    print(f"💰 Your Balance: {player.money:.2f} coins")
+    print(f"💰 Your Balance: £{player.money:.2f} ")
 
     rarity_order = {"Legendary": 0, "Rare": 1, "Uncommon": 2, "Common": 3}
     monsters = session.query(MonsterSpecies).all()
@@ -25,7 +25,7 @@ def open_monster_shop(session, player):
     for idx, m in enumerate(monsters, 1):
         stats = m.base_stats
         price = RARITY_PRICES.get(m.rarity, 500)
-        print(f"{idx}. {m.name} ({m.type} - {m.rarity}) - 💰 {price} coins")
+        print(f"{idx}. {m.name} ({m.type} - {m.rarity}) - 💰 £{price}")
         print(f"   HP: {stats['hp']}, ATK: {stats['attack']}, DEF: {stats['defense']}, SPD: {stats['speed']}")
         print(f"   Abilities: {', '.join(m.abilities)}")
 
@@ -40,7 +40,7 @@ def open_monster_shop(session, player):
         price = RARITY_PRICES.get(selected.rarity, 500)
 
         if player.money < price:
-            print(f"❌ Not enough coins! You have {player.money:.2f}, but {selected.name} costs {price}.")
+            print(f"❌ Not enough money! You have £{player.money:.2f}, but {selected.name} costs £{price}.")
             return
 
         level = random.randint(1, 5)
@@ -57,7 +57,7 @@ def open_monster_shop(session, player):
         session.add(monster)
         session.commit()
 
-        print(f"🎉 You purchased {selected.name} (Lvl {level}) for {price} coins!")
-        print(f"💰 Remaining Balance: {player.money:.2f} coins")
+        print(f"🎉 You purchased {selected.name} (Lvl {level}) for £{price} !")
+        print(f"💰 Remaining Balance: £{player.money:.2f} ")
     else:
         print("❌ Invalid selection.")

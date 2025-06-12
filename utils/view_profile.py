@@ -5,7 +5,7 @@ def view_player_profile(session, player):
     print(f"👤 Username: {player.username}")
     print(f"🎚️ Level: {player.level}")
     print(f"🧠 Experience: {round(player.experience, 1)}")
-    print(f"💰 Money: ${round(player.money, 2)}")
+    print(f"💰 Money: £{round(player.money, 2)}")
 
     monster_count = session.query(PlayerMonster).filter_by(player_id=player.id).count()
     print(f"👾 Monsters Caught: {monster_count}")

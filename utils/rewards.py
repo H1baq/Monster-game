@@ -22,7 +22,7 @@ def reward_player(session, player, difficulty="normal"):
     player.gain_experience(reward["xp"])
     player.money = getattr(player, "money", 0) + reward["money"]
 
-    print(f"💰 You received {reward['money']} coins and {reward['xp']} XP.")
+    print(f"💰 You received £{reward['money']} and {reward['xp']} XP.")
 
     # Rare monster reward for epic crates
     if reward["crate"] == "Gold":
