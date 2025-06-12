@@ -1,6 +1,7 @@
 from db import Session
 from models.player import Player
 from models.player_monsters import PlayerMonster
+from models.relationship import Relationship
 from utils.auth import login_or_create_player
 from utils.catching import try_catch_monster
 from utils.leveling import level_up_monster
@@ -11,12 +12,14 @@ from utils.battle_logger import log_battle
 from utils.battle_engine import simulate_battle, simulate_ai_battle
 from utils.battle_logger import view_battle_history
 from utils.shop import open_monster_shop
+from utils.relationship import add_relationship, list_relationships, get_related_player_ids, clean_invalid_relationships
 from utils.trading import propose_trade, respond_to_trade, list_player_ids, list_player_monsters, list_pending_trades
 
 def main(session):
-    player = login_or_create_player(session)
+    clean_invalid_relationships(session) # Clean up any invalid relationships at startup
+    player = login_or_create_player(session) # Login or create player
 
-    while True:
+    while True: # Main game loop
         session.refresh(player)
         print(f"\n=== MONSTER TAMER HUB — Logged in as {player.username} ===")
         print(f"🔹 Level: {player.level} | 🧠 XP: {round(player.experience, 1)} | 💰 Money: ${round(player.money, 2)}")
@@ -31,6 +34,7 @@ def main(session):
         print("8. View Battle History")
         print("9. Visit Ultra Rare Monster Shop")
         print("10. Trade Monsters")
+        print("11. View Relationships")
         print("0. Exit")
 
         choice = input("Choose an option: ")
@@ -122,6 +126,54 @@ def main(session):
                     print("⚠️ Invalid input.")
             else:
                 print("❌ Invalid choice.")
+        
+        elif choice == "11":
+            print("\n🧩 Friend/Rival System")
+            print("1. Add Friend/Rival")
+            print("2. View My Friends")
+            print("3. View My Rivals")
+            print("4. Battle a Friend/Rival")
+
+            sub = input("Choose: ").strip()
+
+            if sub == "1":
+                try:
+                    target_id = int(input("Enter Player ID to relate to: "))
+                    relation_type = input("Type ('friend' or 'rival'): ").strip().lower()
+                    if relation_type not in ["friend", "rival"]:
+                        print("❌ Invalid type.")
+                    else:
+                        add_relationship(session, player.id, target_id, relation_type)
+                except ValueError:
+                    print("❌ Invalid input.")
+
+            elif sub == "2":
+                list_relationships(session, player.id, "friend")
+
+            elif sub == "3":
+                list_relationships(session, player.id, "rival")
+
+            elif sub == "4":
+                relation = input("Battle a friend or rival? ").strip().lower()
+                if relation not in ["friend", "rival"]:
+                    print("❌ Invalid choice.")
+                    return
+                ids = get_related_player_ids(session, player.id, relation)
+                if not ids:
+                    print(f"⚠️ No {relation}s found.")
+                    return
+                print(f"\nAvailable {relation}s:")
+                for pid in ids:
+                    p = session.query(Player).get(pid)
+                    print(f"🆔 {p.id} | 👤 {p.username}")
+                try:
+                    opponent_id = int(input("Enter opponent's Player ID: "))
+                    if opponent_id not in ids:
+                        print("⚠️ Not your friend/rival.")
+                        return
+                    simulate_battle(session, player.id, session.query(Player).get(opponent_id).username)
+                except ValueError:
+                    print("❌ Invalid input.")
 
         elif choice == "0":
             print("Rest well, fierce tamer!")
@@ -130,7 +182,7 @@ def main(session):
         else:
             print("❌ Invalid choice. Try again.")
 
-
+# Ensure all relationships are valid at the end of each loop
 if __name__ == "__main__":
     with Session() as session:
         main(session)
