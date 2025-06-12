@@ -1,6 +1,22 @@
 from models.trade import Trade
 from models.player_monsters import PlayerMonster
+from models.player import Player
 
+def list_player_ids(session):
+    players = session.query(Player).all()
+    for p in players:
+        print(f"🆔 ID: {p.id} | 👤 Username: {p.username}")
+
+def list_player_monsters(session, player_id):
+    monsters = session.query(PlayerMonster).filter_by(player_id=player_id).all()
+    for m in monsters:
+        print(f"🆔 ID: {m.id} | 🐉 {m.species.name} | Lvl: {m.level}")
+
+def list_pending_trades(session):
+    trades = session.query(Trade).filter_by(status="pending").all()
+    for t in trades:
+        print(f"📨 Trade ID: {t.id} | From Player {t.sender_id} → To Player {t.receiver_id} | "
+              f"Offer Monster ID: {t.offered_monster_id} ↔ Request Monster ID: {t.requested_monster_id}")
 
 
 def propose_trade(session, sender_id, receiver_id, offered_id, requested_id):
@@ -9,8 +25,6 @@ def propose_trade(session, sender_id, receiver_id, offered_id, requested_id):
     session.add(trade)
     session.commit()
     print("Trade proposed!")
-
-
 
 def respond_to_trade(session, trade_id, accept=True):
     trade = session.query(Trade).filter_by(id=trade_id).first()
