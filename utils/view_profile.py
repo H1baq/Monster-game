@@ -1,4 +1,5 @@
 from models.player_monsters import PlayerMonster
+from rich import print
 
 def view_player_profile(session, player):
     print("\n=== 📊 PLAYER PROFILE ===")

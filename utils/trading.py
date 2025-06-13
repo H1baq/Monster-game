@@ -1,6 +1,7 @@
 from models.trade import Trade
 from models.player_monsters import PlayerMonster
 from models.player import Player
+from utils.ui import print_error, print_warning, print_subtitle
 
 def list_player_ids(session):
     players = session.query(Player).all()
@@ -20,11 +21,16 @@ def list_pending_trades(session):
 
 
 def propose_trade(session, sender_id, receiver_id, offered_id, requested_id):
-    trade = Trade(sender_id=sender_id, receiver_id=receiver_id,
-                  offered_monster_id=offered_id, requested_monster_id=requested_id)
-    session.add(trade)
-    session.commit()
-    print("Trade proposed!")
+    sender = session.query(Player).get(sender_id)
+    receiver = session.query(Player).get(receiver_id)
+
+    if sender is None or receiver is None:
+        print_error("Invalid sender or receiver ID.")
+        return
+
+    if sender.id == receiver.id:
+        print_error("You cannot trade with yourself.")
+        return
 
 def respond_to_trade(session, trade_id, accept=True):
     trade = session.query(Trade).filter_by(id=trade_id).first()
@@ -45,7 +51,7 @@ def respond_to_trade(session, trade_id, accept=True):
             print("❌ One or both monsters in this trade do not exist.")
             return
 
-        # Swap monster ownership
+        # Swap monster owners
         offered.player_id, requested.player_id = trade.receiver_id, trade.sender_id
 
     trade.status = "accepted" if accept else "declined"
