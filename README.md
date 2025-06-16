@@ -1,4 +1,5 @@
 🎮 Monster Collector CLI Game
+
 Welcome to Monster Collector, a command-line game where you collect, battle, and trade a variety of elemental monsters! Built with Python and enhanced by the rich library for styled terminal output, this game offers an interactive and engaging experience entirely in your terminal.
 
 🧩 Features
