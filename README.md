@@ -59,6 +59,7 @@ Implement real-time multiplayer support
 Web or GUI version of the game
 
 🧠 Authors:
+
 Kane Kabena : kane.kabena@student.moringaschool.com
 
 Hibaq Adan : hibaqku7@gmail.com
